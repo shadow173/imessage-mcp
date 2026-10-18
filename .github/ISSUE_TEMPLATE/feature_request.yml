@@ -1,0 +1,25 @@
+name: Feature request
+description: Suggest a tool, an option or an improvement.
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: Use made-up examples only. Never paste real messages, names or numbers.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What are you trying to do?
+      description: The task you or your agent wanted to get done, and where the current tools fall short.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What would help?
+      description: A new tool, an argument, a setting or a behavior change. Say how it affects privacy or sending, if it does.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you considered

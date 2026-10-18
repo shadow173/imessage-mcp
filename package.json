@@ -1,0 +1,68 @@
+{
+  "name": "imessage-mcp",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Remote and local MCP server for iMessage: OAuth gateway plus a Mac bridge over chat.db",
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "mcp-server",
+    "imessage",
+    "messages",
+    "macos",
+    "chatgpt",
+    "claude",
+    "oauth"
+  ],
+  "homepage": "https://github.com/shadow173/imessage-mcp#readme",
+  "bugs": {
+    "url": "https://github.com/shadow173/imessage-mcp/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shadow173/imessage-mcp.git"
+  },
+  "license": "MIT",
+  "author": "shadow173",
+  "type": "module",
+  "bin": {
+    "imessage": "dist/cli.js"
+  },
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json && cp src/live/extract.swift dist/live/",
+    "start": "node dist/gateway.js",
+    "dev": "tsx watch src/gateway.ts",
+    "bridge": "node --disable-warning=ExperimentalWarning dist/bridge.js",
+    "bridge:dev": "tsx src/bridge.ts",
+    "typecheck": "tsc --noEmit",
+    "lint": "biome check .",
+    "format": "biome check --write .",
+    "test": "NODE_OPTIONS=--disable-warning=ExperimentalWarning tsx --test --test-timeout=60000 test/*.test.ts",
+    "check": "npm run typecheck && npm run lint && npm test && npm run tools-table -- --check",
+    "hash-password": "tsx scripts/hash-password.ts",
+    "peek": "tsx scripts/dev/peek.ts",
+    "describe": "tsx scripts/dev/journey.ts --describe",
+    "tools-table": "tsx scripts/dev/tools-table.ts",
+    "install:bridge": "scripts/install-bridge.sh",
+    "uninstall:bridge": "scripts/uninstall-bridge.sh",
+    "install:cli": "scripts/install-cli.sh"
+  },
+  "dependencies": {
+    "@hono/node-server": "2.1.5",
+    "@modelcontextprotocol/sdk": "1.32.1",
+    "hono": "4.13.13",
+    "jose": "6.2.12",
+    "ws": "8.22.0",
+    "zod": "3.25.76"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.15",
+    "@types/node": "22.20.5",
+    "@types/ws": "8.18.1",
+    "tsx": "4.23.15",
+    "typescript": "5.9.3"
+  }
+}

@@ -1,0 +1,26 @@
+# Dependencies and build output
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+
+# Secrets: never commit real config. Example files are fine.
+.env
+.env.*
+!.env.example
+*.env
+!*.example.env
+
+# Message data, sidecar databases and sockets (never commit these)
+*.db
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+*.abcddb
+*.sock
+
+# Logs and OS clutter
+*.log
+.DS_Store
