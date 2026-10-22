@@ -159,21 +159,25 @@ describe('token endpoint', () => {
     }
   });
 
-  it('rotates refresh tokens: a rotated-out token works only briefly, then ends the whole family', async () => {
+  it('rotates refresh tokens: the previous token is a retry until its replacement is used, then reuse ends the family', async () => {
     const { f, authState } = gateway();
     const { client_id } = await register(f);
     const first = (await authorize(f, { clientId: client_id, password: PASSWORD })).json;
     const r2 = await refresh(f, client_id, first.refresh_token);
     assert.equal(r2.status, 200);
     assert.notEqual(r2.json.refresh_token, first.refresh_token);
-    // A retry with the old token inside a minute gets the same new token, not a second one.
+    // The client never got r2 (a dropped response) and retries much later: it gets r2 again, not a sign-out.
+    for (const fam of authState.families.values()) fam.at -= 60 * 60_000;
     const retry = await refresh(f, client_id, first.refresh_token);
+    assert.equal(retry.status, 200);
     assert.equal(retry.json.refresh_token, r2.json.refresh_token);
-    for (const fam of authState.families.values()) fam.at -= 61_000;
+    // Once r2 is used, the first token is two generations old: presenting it ends the whole family.
+    const r3 = await refresh(f, client_id, r2.json.refresh_token);
+    assert.equal(r3.status, 200);
     const reuse = await refresh(f, client_id, first.refresh_token);
     assert.equal(reuse.json.error, 'invalid_grant');
     assert.match(reuse.json.error_description, /already used/);
-    assert.equal((await refresh(f, client_id, r2.json.refresh_token)).json.error, 'invalid_grant');
+    assert.equal((await refresh(f, client_id, r3.json.refresh_token)).json.error, 'invalid_grant');
   });
 
   it('a reused authorization code is refused and ends the sign-in its first use started', async () => {

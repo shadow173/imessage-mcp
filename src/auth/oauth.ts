@@ -173,8 +173,6 @@ const waitText = (s: number) => (s >= 90 ? `${Math.ceil(s / 60)} min` : `${s} s`
 
 /** RFC 7636: 43-128 characters from the unreserved set, for both the verifier and the S256 challenge. */
 const PKCE_VALUE = /^[A-Za-z0-9._~-]{43,128}$/;
-/** A client may present the refresh token it just rotated out for this long (a retry, or two copies racing). */
-const REFRESH_RETRY_MS = MINUTE_MS;
 
 const NO_STORE = { 'Cache-Control': 'no-store' };
 const CONSENT_HEADERS = {
@@ -464,9 +462,11 @@ export function registerOAuthRoutes(app: Hono, deps: AuthDeps): AuthState {
       // presented takes over the family (the best a stateless server can do).
       const fam = state.families.get(rt.fam);
       if (fam && fam.jti !== rt.jti) {
-        if (fam.prev === rt.jti && Date.now() - fam.at < REFRESH_RETRY_MS)
+        // The token just rotated out is a retry until its replacement is used: the client may never have received the
+        // response (a dropped connection), so hand back the same replacement instead of signing it out.
+        if (fam.prev === rt.jti)
           return tokenResponse(c, await accessToken(client.clientId, scope, rt.aud), fam.token, scope);
-        // A rotated-out token came back after the grace period: someone else may hold a copy, so end the family.
+        // An older token came back after its replacement was used: someone else may hold a copy, so end the family.
         revokeFamily(rt.fam);
         return oauthError(c, 'invalid_grant', 'The refresh token was already used. Connect again.');
       }

@@ -6,6 +6,16 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-10-22
+
+### Fixed
+
+- Connected clients could be signed out with "auth failed" after a network blip. Refresh tokens rotate, and a client
+  that presented its previous token more than a minute after a refresh was treated as replaying a stolen token, which
+  revoked its whole sign-in. When the refresh response is lost in transit (a dropped connection or a hosting-provider
+  incident), the client never receives the new token and retries with the old one. The previous token is now accepted
+  as a retry until its replacement is first used; only a token two generations old ends the sign-in.
+
 ## [0.2.0] - 2026-10-18
 
 The first public release.
@@ -47,5 +57,6 @@ The first public release.
 - The bridge passes none of its secrets to the processes it starts, and `textutil` never loads remote resources.
 - The bridge deletes tool-call journal and audit rows after 30 days and stored send results after 7.
 
-[Unreleased]: https://github.com/shadow173/imessage-mcp/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/shadow173/imessage-mcp/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/shadow173/imessage-mcp/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/shadow173/imessage-mcp/releases/tag/v0.2.0

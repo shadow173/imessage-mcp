@@ -1,6 +1,6 @@
 {
   "name": "imessage-mcp",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": true,
   "description": "Remote and local MCP server for iMessage: OAuth gateway plus a Mac bridge over chat.db",
   "keywords": [
