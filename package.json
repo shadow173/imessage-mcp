@@ -53,7 +53,7 @@
   "dependencies": {
     "@hono/node-server": "2.1.5",
     "@modelcontextprotocol/sdk": "1.32.1",
-    "hono": "4.13.13",
+    "hono": "4.13.14",
     "jose": "6.2.12",
     "ws": "8.22.0",
     "zod": "3.25.76"
